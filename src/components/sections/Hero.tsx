@@ -1,3 +1,4 @@
+import { MapPin, Camera } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Eyebrow } from '../ui/Eyebrow';
 import { HeroPhone } from '../PhoneMockup';
@@ -26,7 +27,7 @@ export function Hero({ onCtaClick }: HeroProps) {
           >
             Find the spots
             <br />
-            worth shooting at.
+            <span className="text-gradient-neon">worth shooting at.</span>
           </h1>
           <p
             className="reveal mt-5 max-w-md text-base leading-relaxed text-white/60 sm:text-lg"
@@ -54,6 +55,34 @@ export function Hero({ onCtaClick }: HeroProps) {
             <div className="absolute -left-6 top-1/4 h-2 w-2 rounded-full bg-accent-400/60 blur-[1px] animate-float" />
             <div className="absolute -right-4 top-1/2 h-1.5 w-1.5 rounded-full bg-cyan-400/50 blur-[1px] animate-float" style={{ animationDelay: '2s' }} />
             <div className="absolute left-1/3 -bottom-2 h-1.5 w-1.5 rounded-full bg-accent-300/40 blur-[1px] animate-float" style={{ animationDelay: '4s' }} />
+
+            {/* Ambient stats badge 1 (left side) */}
+            <div 
+              className="absolute -left-16 bottom-24 z-20 hidden md:flex items-center gap-2.5 rounded-2xl glass-card px-3.5 py-2.5 shadow-glow-sm animate-float max-w-[170px]" 
+              style={{ animationDelay: '1s' }}
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent-400/10 text-accent-400 border border-accent-400/20">
+                <MapPin size={16} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[9px] font-bold text-white/40 uppercase tracking-wider truncate">Active Spots</p>
+                <p className="text-xs font-extrabold text-white truncate">1,240+ mapped</p>
+              </div>
+            </div>
+
+            {/* Ambient stats badge 2 (right side) */}
+            <div 
+              className="absolute -right-16 top-16 z-20 hidden md:flex items-center gap-2.5 rounded-2xl glass-card px-3.5 py-2.5 shadow-glow-sm animate-float max-w-[170px]" 
+              style={{ animationDelay: '3s' }}
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-400 border border-cyan-400/20">
+                <Camera size={16} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[9px] font-bold text-white/40 uppercase tracking-wider truncate">Community</p>
+                <p className="text-xs font-extrabold text-white truncate">8.4k+ photos</p>
+              </div>
+            </div>
 
             {/* Phone with float + slight oscillation */}
             <div className="animate-float">

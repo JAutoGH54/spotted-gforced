@@ -31,7 +31,7 @@ export function HowItWorks() {
         <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
           Open the app. Find a spot.
           <br />
-          See what's been shot.
+          <span className="text-gradient-neon">See what's been shot.</span>
         </h2>
       </div>
 
@@ -39,20 +39,20 @@ export function HowItWorks() {
         {steps.map((s, i) => (
           <div
             key={s.num}
-            className="reveal group relative overflow-hidden rounded-2xl border border-white/10 bg-ink-900/50 p-7 transition-all duration-300 hover:border-white/20 hover:-translate-y-1"
+            className="reveal group relative glass-card glass-card-hover rounded-2xl p-7"
             data-reveal-delay={i * 120}
           >
-            {/* Hover glow */}
-            <div className="pointer-events-none absolute -top-12 left-1/2 h-24 w-24 -translate-x-1/2 rounded-full bg-accent-400/0 blur-2xl transition-all duration-500 group-hover:bg-accent-400/15" />
+            {/* Hover light leak */}
+            <div className="pointer-events-none absolute -top-12 left-1/2 h-24 w-24 -translate-x-1/2 rounded-full bg-accent-400/0 blur-2xl transition-all duration-500 group-hover:bg-accent-400/12" />
 
             {/* Number badge */}
             <div className="relative mb-5 flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-accent-400 to-cyan-500 text-sm font-extrabold text-ink-950 shadow-glow-sm transition-transform duration-300 group-hover:scale-110">
                 {s.num}
               </span>
-              <s.icon size={20} className="text-white/30" strokeWidth={1.8} />
+              <s.icon size={20} className="text-white/40 transition-colors group-hover:text-cyan-400" strokeWidth={1.8} />
             </div>
-            <h3 className="text-lg font-bold text-white">{s.title}</h3>
+            <h3 className="text-lg font-bold text-white transition-colors group-hover:text-accent-300">{s.title}</h3>
             <p className="mt-1.5 text-sm leading-relaxed text-white/55">{s.desc}</p>
           </div>
         ))}

@@ -22,14 +22,17 @@ const benefits = [
 export function Benefits() {
   return (
     <Section className="py-16 sm:py-20">
-      <div className="grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-3">
         {benefits.map((b, i) => (
           <div
             key={b.title}
-            className="reveal group relative bg-ink-900/60 p-7 transition-all duration-300 hover:bg-ink-800/60 hover:-translate-y-0.5"
+            className="reveal group relative glass-card glass-card-hover rounded-2xl p-7"
             data-reveal-delay={i * 100}
           >
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-accent-400/20 bg-accent-400/10 text-accent-400 transition-all duration-300 group-hover:scale-110 group-hover:shadow-glow-sm">
+            {/* Ambient card top light leak */}
+            <div className="pointer-events-none absolute -top-10 left-1/2 h-20 w-20 -translate-x-1/2 rounded-full bg-accent-400/0 blur-2xl transition-all duration-500 group-hover:bg-accent-400/10" />
+
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-accent-400/20 bg-accent-400/10 text-accent-400 transition-all duration-300 group-hover:scale-110 group-hover:bg-accent-400/15 group-hover:shadow-glow-sm">
               <b.icon size={20} strokeWidth={2} />
             </div>
             <h3 className="text-lg font-bold text-white">{b.title}</h3>
