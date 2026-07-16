@@ -272,15 +272,49 @@ export function PhoneApp({
 
           {/* MAP SCREEN */}
           {activeTab === 'map' && (
-            <div className="relative h-full w-full scan-sweep">
-              {/* Map grid pattern */}
-              <div className="absolute inset-0 map-grid-fine bg-ink-900 opacity-60" />
+            <div className="relative h-full w-full overflow-hidden bg-[#070b13]">
+              {/* Map grid background */}
+              <div className="absolute inset-0 map-grid-fine opacity-20" />
               
-              {/* Faux roads */}
-              <div className="absolute left-0 top-1/4 h-px w-full bg-white/5" />
-              <div className="absolute left-0 top-2/3 h-px w-full bg-white/5" />
-              <div className="absolute left-1/3 top-0 h-full w-px bg-white/5" />
-              <div className="absolute left-3/4 top-0 h-full w-px bg-white/5" />
+              {/* Stylized River (Vector path) */}
+              <svg className="absolute inset-0 h-full w-full opacity-[0.15]" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M -40,320 C 60,300 100,240 160,140 C 220,40 280,-10 320,-30 L 320,-10 C 280,10 220,60 160,160 C 100,260 60,320 -40,340 Z"
+                  fill="#5ab2ff"
+                />
+              </svg>
+
+              {/* Stylized Parks */}
+              <div className="absolute left-[8%] top-[38%] h-14 w-20 rounded-xl bg-emerald-500/10 border border-emerald-500/20 rotate-[12deg] pointer-events-none" />
+              <div className="absolute right-[6%] bottom-[22%] h-16 w-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 pointer-events-none" />
+              <div className="absolute left-[45%] top-[12%] h-10 w-14 rounded-lg bg-emerald-500/5 border border-emerald-500/10 -rotate-[15deg] pointer-events-none" />
+
+              {/* Stylized Roads / Highways */}
+              <svg className="absolute inset-0 h-full w-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                {/* Curved Main Highway */}
+                <path
+                  d="M -10,210 Q 120,180 290,250"
+                  fill="none"
+                  stroke="rgba(255, 255, 255, 0.12)"
+                  strokeWidth="6"
+                />
+                <path
+                  d="M -10,210 Q 120,180 290,250"
+                  fill="none"
+                  stroke="rgba(90, 178, 255, 0.25)"
+                  strokeWidth="1.5"
+                  strokeDasharray="4,4"
+                />
+                
+                {/* Secondary roads */}
+                <path d="M 75,0 L 75,500" fill="none" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="3" />
+                <path d="M 215,0 L 215,500" fill="none" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="3" />
+                <path d="M 0,95 L 280,95" fill="none" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="3" />
+                <path d="M 0,390 L 280,390" fill="none" stroke="rgba(255, 255, 255, 0.08)" strokeWidth="3" />
+              </svg>
+
+              {/* Radar scanner sweep effect */}
+              <div className="absolute inset-0 scan-sweep pointer-events-none" />
 
               {/* Markers */}
               {SPOTS_DATA.map((spot) => {

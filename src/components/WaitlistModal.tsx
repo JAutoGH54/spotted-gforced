@@ -38,7 +38,7 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
 
   if (!open) return null;
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -57,8 +57,42 @@ export function WaitlistModal({ open, onClose }: WaitlistModalProps) {
     }
 
     setStatus('loading');
-    // Mocked success — swap for real backend call later
-    setTimeout(() => setStatus('success'), 800);
+
+    const formId = import.meta.env.VITE_FORMSPREE_FORM_ID;
+    if (!formId) {
+      console.warn(
+        'VITE_FORMSPREE_FORM_ID is not defined. Please add it to your .env file to enable actual email collection. Simulating success...'
+      );
+      setTimeout(() => setStatus('success'), 800);
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://formspree.io/f/${formId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({ email: trimmed }),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+      } else {
+        const data = await response.json();
+        const errorMsg =
+          data?.error ||
+          (data?.errors ? data.errors.map((err: any) => err.message).join(', ') : '') ||
+          'Something went wrong. Please try again.';
+        setError(errorMsg);
+        setStatus('error');
+      }
+    } catch (err) {
+      console.error('Waitlist submit error:', err);
+      setError('Network error. Please try again later.');
+      setStatus('error');
+    }
   };
 
   return (

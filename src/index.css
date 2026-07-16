@@ -21,14 +21,14 @@
   /* ---- Map grid backgrounds ---- */
   .map-grid {
     background-image:
-      linear-gradient(rgba(90, 178, 255, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(90, 178, 255, 0.06) 1px, transparent 1px);
+      linear-gradient(rgba(90, 178, 255, 0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(90, 178, 255, 0.12) 1px, transparent 1px);
     background-size: 32px 32px;
   }
   .map-grid-fine {
     background-image:
-      linear-gradient(rgba(90, 178, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(90, 178, 255, 0.04) 1px, transparent 1px);
+      linear-gradient(rgba(90, 178, 255, 0.10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(90, 178, 255, 0.10) 1px, transparent 1px);
     background-size: 16px 16px;
   }
 

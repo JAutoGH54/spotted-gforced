@@ -126,34 +126,105 @@ export default function MapTab() {
 
   // Mock Map Rendering for Web / Simulator where Mapbox native isn't supported
   const renderMockMap = () => {
+    const centerLong = currentCoords ? currentCoords[0] : 139.6917;
+    const centerLat = currentCoords ? currentCoords[1] : 35.6895;
+
+    // Helper to project lat/long coordinates onto our simulated visual grid relative to the current focused coordinate
+    const getPinCoords = (spotLong: number, spotLat: number) => {
+      const dLong = spotLong - centerLong;
+      const dLat = spotLat - centerLat;
+
+      // Adjust scale to keep them visible but separated on screen
+      const scale = 400; 
+      const x = 50 + dLong * scale;
+      const y = 50 - dLat * scale; // Invert Y for screen coordinates
+
+      return {
+        left: `${Math.max(10, Math.min(90, x))}%` as any,
+        top: `${Math.max(10, Math.min(85, y))}%` as any,
+      };
+    };
+
     return (
-      <View style={[styles.mockMapContainer, { backgroundColor: colors.backgroundElement }]}>
-        <View style={styles.mockHeader}>
-          <Text style={[styles.mockMapTitle, { color: colors.text }]}>Car Spots Map View</Text>
-          <Text style={[styles.mockMapSubtitle, { color: colors.textSecondary }]}>
-            (Simulator/Web Interactive Preview)
-          </Text>
+      <View style={[styles.mockMapContainer, { backgroundColor: '#070b13' }]}>
+        {/* Background Grid Lines */}
+        <View style={styles.gridOverlay}>
+          {/* Vertical grid lines */}
+          <View style={[styles.gridLineV, { left: '16.6%' }]} />
+          <View style={[styles.gridLineV, { left: '33.3%' }]} />
+          <View style={[styles.gridLineV, { left: '50.0%' }]} />
+          <View style={[styles.gridLineV, { left: '66.6%' }]} />
+          <View style={[styles.gridLineV, { left: '83.3%' }]} />
+
+          {/* Horizontal grid lines */}
+          <View style={[styles.gridLineH, { top: '16.6%' }]} />
+          <View style={[styles.gridLineH, { top: '33.3%' }]} />
+          <View style={[styles.gridLineH, { top: '50.0%' }]} />
+          <View style={[styles.gridLineH, { top: '66.6%' }]} />
+          <View style={[styles.gridLineH, { top: '83.3%' }]} />
         </View>
+
+        {/* Stylized River (slanting blue bar) */}
+        <View style={styles.mockRiver} />
+
+        {/* Stylized Parks */}
+        <View style={[styles.mockPark, { left: '8%', top: '38%', width: 80, height: 60 }]} />
+        <View style={[styles.mockPark, { right: '12%', bottom: '22%', width: 70, height: 70, borderRadius: 35 }]} />
+
+        {/* Stylized Streets */}
+        <View style={[styles.mockStreet, { left: 0, top: '25%', width: '100%', height: 3 }]} />
+        <View style={[styles.mockStreet, { left: 0, top: '70%', width: '100%', height: 3 }]} />
+        <View style={[styles.mockStreet, { left: '30%', top: 0, width: 3, height: '100%' }]} />
+        <View style={[styles.mockStreet, { left: '75%', top: 0, width: 3, height: '100%' }]} />
         
-        {/* Car markers simulator list */}
-        <ScrollView style={styles.markerList}>
-          {spots.map((spot) => (
-            <TouchableOpacity 
-              key={spot.id} 
-              style={[styles.mockMarkerCard, { borderColor: colors.border, backgroundColor: colors.background }]}
+        {/* Highway */}
+        <View style={[styles.mockHighway, { left: 0, top: '48%', width: '100%', height: 8 }]} />
+
+        {/* Search location focus radar indicator */}
+        <View style={[styles.centerRadar, { left: '50%', top: '50%', marginLeft: -24, marginTop: -24 }]} />
+        <View style={[styles.centerDot, { left: '50%', top: '50%', marginLeft: -4, marginTop: -4 }]} />
+
+        {/* Map Markers for Spots */}
+        {spots.map((spot) => {
+          const pinStyle = getPinCoords(spot.longitude, spot.latitude);
+          const isSelected = selectedSpot?.id === spot.id;
+
+          return (
+            <TouchableOpacity
+              key={spot.id}
+              style={[
+                styles.mockPinContainer,
+                pinStyle,
+                isSelected && styles.mockPinSelected
+              ]}
               onPress={() => setSelectedSpot(spot)}
             >
-              <Ionicons name="car-sport" size={24} color={colors.primary} />
-              <View style={styles.mockMarkerText}>
-                <Text style={[styles.mockMarkerName, { color: colors.text }]}>{spot.title}</Text>
-                <Text style={[styles.mockMarkerInfo, { color: colors.textSecondary }]}>
-                  {spot.make} {spot.model} • spotted by @{spot.profiles?.username}
-                </Text>
+              {isSelected && <View style={styles.selectedPinPulse} />}
+              <View style={[styles.mockCustomPin, { backgroundColor: isSelected ? colors.primary : '#3a93ff' }]}>
+                <Ionicons name="car-sport" size={14} color="#FFFFFF" />
               </View>
-              <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
             </TouchableOpacity>
-          ))}
-        </ScrollView>
+          );
+        })}
+
+        {/* Floating instruction card */}
+        <View style={[styles.floatingInfoCard, { backgroundColor: colors.backgroundElement, borderColor: colors.border }]}>
+          <Text style={[styles.floatingInfoTitle, { color: colors.text }]}>Car Spots Map Preview</Text>
+          <Text style={[styles.floatingInfoSubtitle, { color: colors.textSecondary }]}>
+            {Platform.OS === 'web' ? 'Web interactive simulation' : 'Simulator preview (Mapbox bypassed)'}
+          </Text>
+        </View>
+
+        {/* Floating List toggle button */}
+        <TouchableOpacity 
+          style={[styles.floatingListToggle, { backgroundColor: colors.primary }]}
+          onPress={() => {
+            const spotList = spots.map(s => `• ${s.title} (${s.make} ${s.model})`).join('\n');
+            Alert.alert('All Car Spots', spotList);
+          }}
+        >
+          <Ionicons name="list" size={18} color="#FFFFFF" />
+        </TouchableOpacity>
       </View>
     );
   };
@@ -324,41 +395,142 @@ const styles = StyleSheet.create({
   },
   mockMapContainer: {
     flex: 1,
-    padding: 16,
+    position: 'relative',
+    overflow: 'hidden',
   },
-  mockHeader: {
-    marginBottom: 16,
+  gridOverlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    opacity: 0.12,
   },
-  mockMapTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  gridLineV: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: 1,
+    backgroundColor: '#5ab2ff',
   },
-  mockMapSubtitle: {
-    fontSize: 13,
-    marginTop: 2,
+  gridLineH: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 1,
+    backgroundColor: '#5ab2ff',
   },
-  markerList: {
-    flex: 1,
+  mockRiver: {
+    position: 'absolute',
+    left: '-20%',
+    top: '30%',
+    width: '140%',
+    height: 35,
+    backgroundColor: '#5ab2ff',
+    opacity: 0.12,
+    transform: [{ rotate: '-35deg' }],
   },
-  mockMarkerCard: {
-    flexDirection: 'row',
+  mockPark: {
+    position: 'absolute',
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    borderColor: 'rgba(16, 185, 129, 0.18)',
+    borderWidth: 1.5,
+    borderRadius: 8,
+  },
+  mockStreet: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+  },
+  mockHighway: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, 0.10)',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(90, 178, 255, 0.2)',
+  },
+  centerRadar: {
+    position: 'absolute',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(90, 178, 255, 0.08)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(90, 178, 255, 0.25)',
+  },
+  centerDot: {
+    position: 'absolute',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#5ab2ff',
+  },
+  mockPinContainer: {
+    position: 'absolute',
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 12,
+    zIndex: 15,
+  },
+  mockPinSelected: {
+    transform: [{ scale: 1.2 }],
+    zIndex: 20,
+  },
+  selectedPinPulse: {
+    position: 'absolute',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(90, 178, 255, 0.3)',
+  },
+  mockCustomPin: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    shadowColor: '#000000',
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  floatingInfoCard: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    right: 12,
+    padding: 10,
+    borderRadius: 10,
     borderWidth: 1,
-    borderRadius: 12,
-    marginBottom: 10,
+    opacity: 0.9,
+    shadowColor: '#000000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
-  mockMarkerText: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  mockMarkerName: {
-    fontSize: 15,
+  floatingInfoTitle: {
+    fontSize: 12,
     fontWeight: 'bold',
   },
-  mockMarkerInfo: {
-    fontSize: 12,
+  floatingInfoSubtitle: {
+    fontSize: 9,
     marginTop: 2,
+  },
+  floatingListToggle: {
+    position: 'absolute',
+    right: 12,
+    bottom: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000000',
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
   modalOverlay: {
     position: 'absolute',
