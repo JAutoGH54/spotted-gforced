@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ink-950 text-white antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection {
+    @apply bg-accent-400/30 text-white;
+  }
+}
+
+@layer utilities {
+  /* ---- Map grid backgrounds ---- */
+  .map-grid {
+    background-image:
+      linear-gradient(rgba(90, 178, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(90, 178, 255, 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .map-grid-fine {
+    background-image:
+      linear-gradient(rgba(90, 178, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(90, 178, 255, 0.04) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  /* ---- Panning grid for global background ---- */
+  .map-grid-pan {
+    background-image:
+      linear-gradient(rgba(90, 178, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(90, 178, 255, 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+    animation: pan-grid 20s linear infinite;
+  }
+
+  /* ---- Topographic contour SVG ---- */
+  .topo-bg {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cg fill='none' stroke='%235ab2ff' stroke-width='0.5' opacity='0.4'%3E%3Cpath d='M300,300 m-260,0 a260,260 0 1,0 520,0 a260,260 0 1,0 -520,0'/%3E%3Cpath d='M300,300 m-200,0 a200,200 0 1,0 400,0 a200,200 0 1,0 -400,0'/%3E%3Cpath d='M300,300 m-140,0 a140,140 0 1,0 280,0 a140,140 0 1,0 -280,0'/%3E%3Cpath d='M300,300 m-80,0 a80,80 0 1,0 160,0 a80,80 0 1,0 -160,0'/%3E%3Cpath d='M300,300 m-20,0 a20,20 0 1,0 40,0 a20,20 0 1,0 -40,0'/%3E%3Cpath d='M100,200 Q200,150 300,200 T500,200'/%3E%3Cpath d='M100,400 Q200,350 300,400 T500,400'/%3E%3Cpath d='M200,100 Q150,200 200,300 T200,500'/%3E%3Cpath d='M400,100 Q450,200 400,300 T400,500'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 600px 600px;
+    animation: pan-topo 40s linear infinite;
+  }
+
+  /* ---- Film grain ---- */
+  .grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-accent-300 to-cyan-400 bg-clip-text text-transparent;
+  }
+
+  /* ---- Scroll reveal ---- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---- Scanning sweep for phone map screens ---- */
+  .scan-sweep::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(90, 178, 255, 0.12) 48%,
+      rgba(90, 178, 255, 0.2) 50%,
+      rgba(90, 178, 255, 0.12) 52%,
+      transparent 100%
+    );
+    height: 40%;
+    animation: scan-down 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* ---- Shimmer sweep ---- */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.08) 45%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.08) 55%,
+      transparent 70%
+    );
+    transform: translateX(-100%);
+    animation: shimmer-slide 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* ---- Animated gradient border ---- */
+  .gradient-border-focus {
+    position: relative;
+  }
+  .gradient-border-focus:focus-within {
+    background: linear-gradient(90deg, rgba(90, 178, 255, 0.3), rgba(95, 233, 240, 0.3)) border-box;
+    border-color: transparent;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* ---- Keyframes ---- */
+@keyframes pan-grid {
+  0% { background-position: 0 0; }
+  100% { background-position: 48px 48px; }
+}
+
+@keyframes pan-topo {
+  0% { background-position: 0 0; }
+  100% { background-position: 600px 300px; }
+}
+
+@keyframes scan-down {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(350%); opacity: 0; }
+}
+
+@keyframes shimmer-slide {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+/* ---- Page load fade ---- */
+@keyframes page-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.page-fade-in {
+  animation: page-fade-in 0.6s ease-out forwards;
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .map-grid-pan,
+  .topo-bg,
+  .scan-sweep::after,
+  .shimmer::after {
+    animation: none !important;
+  }
+}
